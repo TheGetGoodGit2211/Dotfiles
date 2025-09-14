@@ -1,5 +1,8 @@
+require("drakcoder.lazy")
+
+
 -- color scheme
-local theme = "retrobox"
+local theme = "dracula"
 vim.cmd("colorscheme " .. theme)
 
 
