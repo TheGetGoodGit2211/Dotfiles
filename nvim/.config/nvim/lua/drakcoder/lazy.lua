@@ -14,20 +14,18 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-local opts = {
-
-  change_detection = {
-
-    notify = false
-
-  }
-
-}
-
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-require("lazy").setup("drakcoder.plugins", opts)
+require("lazy").setup({
+  spec = {
+    { import = "drakcoder.plugins" },
+    { import = "drakcoder.plugins.lsp" }
+  },
+  change_detection = {
+    notify = false
+  },
+})
 
 vim.keymap.set("n", "<leader>lz", ":Lazy<CR>")
 vim.keymap.set("n", "<leader>lc", ":Lazy clean<CR>")
