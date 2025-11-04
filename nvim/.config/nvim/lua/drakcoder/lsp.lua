@@ -13,4 +13,11 @@ vim.lsp.config("*", {
 })
 
 -- enabling lsps
-vim.lsp.enable("lua_ls")
+servers = require("drakcoder.servers")
+
+for _, server in ipairs(servers) do
+  vim.lsp.enable(server)
+end
+
+-- vim.lsp.enable("lua_ls")
+-- vim.lsp.enable("pylsp")

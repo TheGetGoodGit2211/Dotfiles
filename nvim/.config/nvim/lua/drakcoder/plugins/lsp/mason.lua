@@ -10,15 +10,10 @@ return {
   {
     "williamboman/mason-lspconfig",
     config = function()
+      local servers = require("drakcoder.servers")
+
       require("mason-lspconfig").setup({
-        ensure_installed = {
-          "lua_ls",
-          -- "clangd",
-          -- "cmake",
-          -- "html",
-          -- "bashls",
-          -- "jdtls"
-        },
+        ensure_installed = servers
       })
     end,
   },
