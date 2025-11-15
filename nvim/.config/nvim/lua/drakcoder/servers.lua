@@ -4,4 +4,6 @@ return {
   "clangd",
   "fish_lsp",
   "bashls",
+  "neocmake",
+  "glsl_analyzer",
 }
