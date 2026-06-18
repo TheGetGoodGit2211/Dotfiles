@@ -32,6 +32,7 @@ end
 if not command -q zoxide
   echo "[dotfiles] zoxide not found, bootstrapping zoxide..."
   curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-  echo "[dotfiles] initializing zoxide..."
-  zoxide init fish --cmd cd | source
 end
+
+echo "[dotfiles] initializing zoxide..."
+zoxide init fish --cmd cd | source

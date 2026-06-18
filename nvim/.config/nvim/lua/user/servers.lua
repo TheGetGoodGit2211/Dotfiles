@@ -1,7 +1,9 @@
 return {
-  "lua_ls",
-  "clangd",
-  "fish_lsp",
-  "neocmake",
-  "rust_analyzer",
+	"lua_ls",
+	"clangd",
+	"fish_lsp",
+	"neocmake",
+	"rust_analyzer",
+	"slangd",
+	"jedi_language_server",
 }

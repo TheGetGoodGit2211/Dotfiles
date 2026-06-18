@@ -13,35 +13,45 @@
 
 -- enabling lsps
 
----@diagnostic disable-next-line: unused-local
-local on_attach = function(client, bufnr)
-  local opts = { noremap = true, silent = true, buffer = bufnr }
-  local telescope = require('telescope.builtin')
+-- -@diagnostic disable-next-line: unused-local
+local on_attach = function(_, bufnr)
+	local opts = { noremap = true, silent = true, buffer = bufnr }
+	local telescope = require("telescope.builtin")
 
-  vim.keymap.set("n", "<leader>sca", vim.lsp.buf.code_action, opts)       -- [S]erver [C]ode   [A]ctions
-  vim.keymap.set("n", "<leader>sgD", vim.lsp.buf.declaration, opts)       -- [S]erver [G]oto   [D]eclarations
-  vim.keymap.set("n", "<leader>sgd", telescope.lsp_definitions, opts)     -- [S]erver [G]oto   [D]efinitions
-  vim.keymap.set("n", "<leader>sgi", telescope.lsp_implementations, opts) -- [S[erver [G]oto   [I]mplementations
-  vim.keymap.set("n", "<leader>sgr", telescope.lsp_references, opts)      -- [S]erver [G]oto   [R]eferences
-  vim.keymap.set("n", "<leader>shi", vim.lsp.buf.hover, opts)             -- [S]erver [H]over  [I]nfo
-  vim.keymap.set("n", "<leader>sr", vim.lsp.buf.rename, opts)             -- [S]erver [R]ename
+	vim.keymap.set("n", "<leader>sca", vim.lsp.buf.code_action, opts) -- [S]erver [C]ode   [A]ctions
+	vim.keymap.set("n", "<leader>sgD", vim.lsp.buf.declaration, opts) -- [S]erver [G]oto   [D]eclarations
+	vim.keymap.set("n", "<leader>sgd", telescope.lsp_definitions, opts) -- [S]erver [G]oto   [D]efinitions
+	vim.keymap.set("n", "<leader>sgi", telescope.lsp_implementations, opts) -- [S[erver [G]oto   [I]mplementations
+	vim.keymap.set("n", "<leader>sgr", telescope.lsp_references, opts) -- [S]erver [G]oto   [R]eferences
+	vim.keymap.set("n", "<leader>shi", vim.lsp.buf.hover, opts) -- [S]erver [H]over  [I]nfo
+	vim.keymap.set("n", "<leader>sr", vim.lsp.buf.rename, opts) -- [S]erver [R]ename
 end
 
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = vim.api.nvim_create_augroup("LspAttachGroup", { clear = true }),
-  callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    on_attach(client, ev.buf)
-  end
+	group = vim.api.nvim_create_augroup("LspAttachGroup", { clear = true }),
+	callback = function(ev)
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+		on_attach(client, ev.buf)
+	end,
+})
+
+vim.diagnostic.config({
+	virtual_text = {
+		spacing = 4,
+		prefix = "●",
+		severity_sort = true,
+	},
+	underline = true,
+	signs = true,
+	update_in_insert = false,
 })
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
-local lspconfig = require("lspconfig")
-
+-- local lspconfig = require("lspconfig")
 
 local servers = require("user.servers")
 for _, server in ipairs(servers) do
-  vim.lsp.enable(server, true)
-  lspconfig[server].setup({ capabilities = capabilities })
+	vim.lsp.config(server, { capabilities = capabilities })
+	vim.lsp.enable(server, true)
+	-- lspconfig[server].setup({ capabilities = capabilities })
 end
-
