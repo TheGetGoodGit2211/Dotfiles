@@ -1,26 +1,20 @@
 -- note: must have tree-sitter-cli installed for this to work
 return {
-  {
-    "nvim-treesitter/nvim-treesitter",
-    dependencies = {},
-    lazy = false,
-    branch = "main",
-    build = ":TSUpdate",
-    config = function()
-      local langs = {
-        "lua",
-        "java",
-        "cpp",
-        "cmake",
-        "rust",
-      }
+	{
+		"nvim-treesitter/nvim-treesitter",
+		dependencies = {},
+		lazy = false,
+		branch = "main",
+		build = ":TSUpdate",
+		config = function()
+			local grammars = require("user.grammars")
 
-      require("nvim-treesitter").setup({
-        sync_install = false,
-        highlight = { enable = true },
-        indent = { enable = true },
-      })
-      require("nvim-treesitter").install(langs)
-    end,
-  },
+			require("nvim-treesitter").setup({
+				sync_install = false,
+				highlight = { enable = true },
+				indent = { enable = true },
+			})
+			require("nvim-treesitter").install(grammars)
+		end,
+	},
 }

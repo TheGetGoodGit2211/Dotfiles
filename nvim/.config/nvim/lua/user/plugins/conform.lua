@@ -2,6 +2,12 @@ return {
 	"stevearc/conform.nvim",
 	config = function()
 		require("conform").setup({
+			formatters = {
+				rustfmt = {
+					command = "rustup",
+					args = { "run", "nightly", "rustfmt" },
+				},
+			},
 			formatters_by_ft = {
 				lua = { "stylua" },
 				python = { "black" },
