@@ -1,4 +1,5 @@
 return {
+	"d",
 	"lua",
 	"java",
 	"cpp",
