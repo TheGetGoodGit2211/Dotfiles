@@ -1,5 +1,5 @@
 return {
-	"serve-d",
+	"serve_d",
 	"lua_ls",
 	"clangd",
 	"fish_lsp",
