@@ -1,4 +1,5 @@
 return {
+	"wgsl_analyzer",
 	"bashls",
 	"serve_d",
 	"lua_ls",

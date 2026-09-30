@@ -6,4 +6,5 @@ return {
 	"cmake",
 	"rust",
 	"slang",
+	"wgsl",
 }
