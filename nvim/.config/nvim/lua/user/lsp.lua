@@ -39,5 +39,4 @@ local servers = require("user.servers")
 for _, server in ipairs(servers) do
 	vim.lsp.config(server, { capabilities = capabilities })
 	vim.lsp.enable(server, true)
-	-- lspconfig[server].setup({ capabilities = capabilities })
 end
