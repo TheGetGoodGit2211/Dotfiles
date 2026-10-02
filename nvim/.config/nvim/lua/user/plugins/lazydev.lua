@@ -1,5 +1,10 @@
 return {
 	"folke/lazydev.nvim",
-	ft = "lua", -- Only load this plugin when you actually open a Lua file
-	opts = {}, -- Leaving this empty invokes `.setup()` automatically with default settings
+	ft = "lua", -- only load on lua files
+	opts = {
+		library = {
+			-- Load luvit types when the `vim.uv` word is found
+			{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+		},
+	},
 }

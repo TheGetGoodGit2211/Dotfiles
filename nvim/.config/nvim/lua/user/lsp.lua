@@ -33,7 +33,8 @@ vim.diagnostic.config({
 	update_in_insert = false,
 })
 
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
+-- local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 local servers = require("user.servers")
 for _, server in ipairs(servers) do
