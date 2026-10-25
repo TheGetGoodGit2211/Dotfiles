@@ -1,82 +1,74 @@
-function install-dev-tools -d "Installs useful development utilities"
-    echo "[dotfiles] sudo permission is required to install packages. Please provide your user password."
-    if not sudo -v
-        echo "[dotfiles] user failed to authenticate, exiting..."
+function install-dev-tools -d "Install repo/AUR dev utilities"
+    argparse n/non-interactive h/help -- $argv; or return 1
+    if set -q _flag_help
+        echo "usage: install-dev-tools [-n|--non-interactive]"
+        return 0
+    end
+
+    set -l pac_flags
+    if set -q _flag_non_interactive; or not status is-interactive
+        set pac_flags --noconfirm
+    else
+        read -l -P "[dotfiles] run non-interactively (no prompts)? [y/N] " ans
+        string match -qr '^[Yy]' -- $ans; and set pac_flags --noconfirm
+    end
+
+    sudo -v; or begin
+        echo "[dotfiles] sudo authentication failed" >&2
         return 1
     end
 
-    read -P "[dotfiles] run this script interactively?" interactive_choice
-
-    set -l PAC_FLAG
-    set -l RUSTUP_FLAG
-
-    if test "$SHELL" != /usr/bin/fish
-        echo "[dotfiles] Changing default shell to fish..."
-        sudo usermod --shell /usr/bin/fish $USER
+    if not string match -q -- /usr/bin/fish $SHELL
+        test -x /usr/bin/fish; or begin
+            echo "[dotfiles] /usr/bin/fish missing; install fish first" >&2
+            return 1
+        end
+        sudo usermod --shell /usr/bin/fish -- $USER; or return 1
     end
 
-    if string match -qr '^[Yy]' $interactive_choice
-        echo "[dotfiles] running script interactively..."
-    else
-        echo "[dotfiles] running script non-interactively..."
-        set PAC_FLAG --noconfirm
-        set RUSTUP_FLAG -y
-    end
+    fish_add_path -U $HOME/.local/bin
 
-    if not command -q git
-        echo "[dotfiles] git not found, bootstrapping git..."
-        sudo pacman -S git $PAC_FLAG
-    end
+    # Bootstrap build toolchain + a working Cargo provider before building paru.
+    sudo pacman -S --needed $pac_flags base-devel git rustup; or return 1
 
-    if not command -q cargo
-        echo "[dotfiles] cargo not found, bootstrapping rustup..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- $RUSTUP_FLAG
-        fish_add_path -U "$HOME/.cargo/bin" "$HOME/.local/bin"
+    if command -q rustup
+        rustup default stable; or return 1
     end
 
     if not command -q paru
-        sudo pacman -S --needed base-devel $PAC_FLAG
-        git clone https://aur.archlinux.org/paru.git
-        cd paru
-        makepkg -si $PAC_FLAG
-        cd ..
-        rm -r paru/
+        set -l tmp (mktemp -d)
+        pushd $tmp >/dev/null; or return 1
+
+        git clone --depth 1 https://aur.archlinux.org/paru.git
+        or begin
+            popd >/dev/null
+            rm -rf $tmp
+            return 1
+        end
+
+        pushd paru >/dev/null
+        or begin
+            popd >/dev/null
+            rm -rf $tmp
+            return 1
+        end
+
+        makepkg -si $pac_flags
+        set -l mkrc $status
+
+        popd >/dev/null
+        popd >/dev/null
+        rm -rf $tmp
+        test $mkrc -eq 0; or return 1
     end
 
-    if not command -q nvim
-        echo "[dotfiles] neovim not found, bootstrapping neovim..."
-        paru -S neovim-nightly-bin $PAC_FLAG
+    sudo -v; or return 1
+    paru -S --needed $pac_flags fnm zoxide fzf uv neovim-nightly-bin; or return 1
+
+    if command -q fnm
+        fnm install --lts; or return 1
+        fnm default lts-latest; or return 1
     end
 
-    if not command -q fnm
-        echo "[dotfiles] fnm not found, bootstrapping fnm"
-        cargo install fnm
-        fnm i --lts
-        fnm default lts-latest
-        fnm env --use-on-cd --shell fish | source
-    end
-
-    if not command -q uv
-        echo "[dotfiles] uv not found, installing via cargo..."
-        cargo install uv
-    end
-
-    set -l base_venv "$HOME/.venv/base"
-    if not test -d $base_venv
-        echo "[dotfiles] base venv missing, creating with uv..."
-        uv venv $base_venv
-    end
-
-    if test -f "$base_venv/bin/activate.fish"
-        source "$base_venv/bin/activate.fish"
-    else
-        echo "[dotfiles] Warning: base venv activation script missing"
-    end
-
-    if not command -q zoxide
-        echo "[dotfiles] zoxide not found, bootstrapping zoxide..."
-        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-        sudo pacman -S fzf $PAC_FLAG
-        zoxide init fish --cmd cd | source
-    end
+    echo "[dotfiles] done; open a new shell for fnm/zoxide hooks"
 end
