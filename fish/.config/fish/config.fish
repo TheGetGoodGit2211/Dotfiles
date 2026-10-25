@@ -1,12 +1,3 @@
-# set -l cachy_cfg /usr/share/cachyos-fish-config/cachyos-config.fish
-# if test -f $cachy_cfg
-#     source $cachy_cfg
-# end
-
-# if command -q cargo
-#     fish_add_path -U "$HOME/.cargo/bin" "$HOME/.local/bin"
-# end
-
 if not set -q SSH_AUTH_SOCK
     eval (ssh-agent -c)
 end
