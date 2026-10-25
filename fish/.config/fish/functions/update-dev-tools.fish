@@ -1,32 +1,24 @@
-function update-dev-tools -d "Updates user-space development utilities"
+function update-dev-tools -d "Update dev tools (repo + AUR + rustup)"
+    set -l rc 0
+
     if command -q rustup
-        rustup update
-        echo "[dotfiles] rustup has been updated"
+        rustup update; or set rc 1
     else
-        echo "[dotfiles] rustup not found, skipping"
+        echo "[dotfiles] rustup not found, skipping" >&2
+    end
+
+    if command -q paru
+        sudo -v; or return 1
+        paru -Syu --noconfirm --sudoloop; or set rc 1
+    else if command -q pacman
+        sudo -v; or return 1
+        sudo pacman -Syu --noconfirm; or set rc 1
     end
 
     if command -q fnm
-        cargo install fnm
-        fnm install --lts
-        echo "[dotfiles] fnm has been updated"
-    else
-        echo "[dotfiles] fnm not found, skipping"
+        fnm install --lts; and fnm default lts-latest; or set rc 1
     end
 
-    if command -q uv
-        cargo install uv
-        echo "[dotfiles] uv has been updated"
-    else
-        echo "[dotfiles] uv not found, skipping"
-    end
-
-    if command -q zoxide
-        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-        echo "[dotfiles] zoxide has been updated"
-    else
-        echo "[dotfiles] zoxide not found, skipping"
-    end
-
-    echo "[dotfiles] tools updated where possible"
+    test $rc -eq 0; or echo "[dotfiles] one or more updates failed" >&2
+    return $rc
 end
