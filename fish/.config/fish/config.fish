@@ -19,4 +19,10 @@ if command -q zoxide
     zoxide init fish --cmd cd | source
 end
 
+if test -f ~/.venv/bin/activate.fish
+    source ~/.venv/bin/activate.fish
+end
+
+set -gx VIRTUAL_ENV ~/.venv
+
 set -x GEMINI_API_KEY AIzaSyBJOMTAG2RzcJ3BgFRv6eT1g0GIWHW23U0

@@ -1,0 +1,5 @@
+binds {
+    Alt+R { spawn "obs-cmd" "recording" "toggle"; }
+    Alt+S { spawn "obs-cmd" "streaming" "toggle"; }
+    Alt+C { spawn "obs-cmd" "scene-item" "toggle" "Main" "Webcam"; }
+}
