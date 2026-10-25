@@ -9,7 +9,3 @@ end
 if command -q zoxide
     zoxide init fish --cmd cd | source
 end
-
-if test -f ~/.venv/bin/activate.fish
-    source ~/.venv/bin/activate.fish
-end
